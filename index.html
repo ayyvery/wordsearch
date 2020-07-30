@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    
+    <div class="container">
+        <h2>Введите слово:</h2>
+        <form>
+            <div class="input-field">
+                <input type="text" name="item" id="item" value="">
+                <label>Слово для поиска</label>
+                <span></span>
+            </div>
+            <button name="" class="button" type="button" onclick="karen()">Найти</button>
+        </form>
+    </div>
+
+<div class="response"><p id="response"></p></div>
+
+<script>
+	function karen() {
+		var data = document.getElementById("item").value; 
+               
+        // Creating a XHR object 
+        let xhr = new XMLHttpRequest(); 
+        let url = "manager.php"; 
+        
+        // open a connection 
+        xhr.open("POST", url, true); 
+        
+        var firstTextCheck = false;
+        var secondTextCheck = false;
+  
+        // Create a state change callback 
+        xhr.onreadystatechange = function () { 
+            if (xhr.readyState === 4 && xhr.status === 200) { 
+  
+                try {
+                    // Print received data from server
+                    var received = this.responseText.split("\n");
+                    var wordnum = [];
+                    var textid = [];
+                    var output = "";
+                    for(var i = 0; i < received.length; i++) {
+                        wordnum.push(received[i].split(" ")[received[i].split(" ").length - 2]);
+                        textid.push(received[i].split(" ")[received[i].split(" ").length - 1]);
+                        received[i] = received[i].split(" ").splice(0, 5).join(" ");
+                    }
+                    for(var y = 0; y < received.length; y++) {
+                        
+                        if (textid[y] == "1" & firstTextCheck == false) {
+                            var output = "<h>Капитанская дочка</h>";
+                            firstTextCheck = true;
+                        }
+                        
+                        if (textid[y] == "2" & secondTextCheck == false) {
+                            var output = output + "<h>Руслан и Людмила</h>";
+                            secondTextCheck = true;
+                        }
+                        
+                        if (textid[y] == "1") {
+                            var output = output + "<p><a href = \"https://wordsearchtest.000webhostapp.com/text.html#" + wordnum[y] + "\">" + received[y] + "</a></p>";
+                        } else if (textid[y] == "2") {
+                            var output = output + "<p><a href = \"https://wordsearchtest.000webhostapp.com/text2.html#" + wordnum[y] + "\">" + received[y] + "</a></p>";
+                        }
+                    }
+                    
+                    document.getElementById("response").innerHTML = output;
+                } catch(error) {
+                    console.log(error);
+                }
+  
+            } 
+        };
+  
+        // Sending data with the request 
+        xhr.send(data); 
+	}
+</script>
+
+</body>
+</html>
